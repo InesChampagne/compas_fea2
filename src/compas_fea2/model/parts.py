@@ -445,8 +445,8 @@ class _Part(FEAData):
         # gmshModel.set_option("Mesh.OptimizeNetgen", 1)
 
         # Get nodes and elements from the gmsh model
-        gmshModel.heal()
-        gmshModel.generate_mesh(3)
+        # gmshModel.heal()
+        gmshModel.model.mesh.generate(3)
         model = gmshModel.model
         node_coords = model.mesh.get_nodes()[1].reshape((-1, 3), order="C")
         gmsh_elements = model.mesh.get_elements()
@@ -484,8 +484,9 @@ class _Part(FEAData):
                 print(f"Element {ntags} added")
 
         if rigid:
-            point = part.boundary_mesh.centroid()
-            part.reference_node = Node(xyz=point)
+            point = part.center
+            # point = part.boundary_mesh.centroid()
+            part.reference_node = Node(xyz=[point.x, point.y, point.z])
 
         return part
 
