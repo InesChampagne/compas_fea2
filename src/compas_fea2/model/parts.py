@@ -45,19 +45,19 @@ from .elements import _Element
 from .elements import _Element1D
 from .elements import _Element2D
 from .elements import _Element3D
+from .fields import BeamReleaseField
 from .groups import EdgesGroup
 from .groups import ElementsGroup
 from .groups import FacesGroup
+from .groups import FieldsGroup
 from .groups import InteractionsGroup
 from .groups import InterfacesGroup
 from .groups import MaterialsGroup
 from .groups import NodesGroup
 from .groups import SectionsGroup
-from .groups import FieldsGroup
 from .materials.material import _Material
 from .nodes import Node
 from .releases import _BeamEndRelease
-from .fields import BeamReleaseField
 from .sections import ShellSection
 from .sections import SolidSection
 from .sections import _Section
@@ -145,7 +145,7 @@ class _Part(FEAData):
 
         self._reference_node: Optional[Node] = None
 
-        self._releases_fields = FieldsGroup(members=[], name=self.name+"_RELEASES_FIELDS")
+        self._releases_fields = FieldsGroup(members=[], name=self.name + "_RELEASES_FIELDS")
 
     @property
     def __data__(self):
@@ -284,12 +284,12 @@ class _Part(FEAData):
         for line in lines:
             nodes = []
             for p in [line.start, line.end]:
-                if prt.nodes :
+                if prt.nodes:
                     if p not in prt.points:
                         nodes.append(prt.add_node(Node(list(p), mass=mass)))
                     else:
                         nodes.append(list(prt.find_closest_nodes_to_point(p))[0])
-                else :
+                else:
                     nodes.append(prt.add_node(Node(list(p), mass=mass)))
             element = element_cls(nodes=nodes, section=section, orientation=orientation)
             if not isinstance(element, _Element1D):
@@ -675,7 +675,7 @@ class _Part(FEAData):
         """The nodes of the part sorted by their part key."""
         if self._nodes is None:
             raise ValueError("No nodes in the part.")
-        return self.nodes.sorted_by(key=lambda x: x.part_key if x.part_key is not None else -1) # type: ignore
+        return self.nodes.sorted_by(key=lambda x: x.part_key if x.part_key is not None else -1)  # type: ignore
 
     @property
     def points(self) -> List[Point]:
@@ -689,7 +689,7 @@ class _Part(FEAData):
         """The points of the part's nodes sorted by their part key."""
         if self._nodes is None:
             raise ValueError("No nodes in the part.")
-        return [node.point for node in self.nodes.sorted_by(key=lambda x: x.part_key if x.part_key is not None else -1)] # type: ignore
+        return [node.point for node in self.nodes.sorted_by(key=lambda x: x.part_key if x.part_key is not None else -1)]  # type: ignore
 
     @property
     def elements(self) -> ElementsGroup | None:
@@ -1044,6 +1044,7 @@ class _Part(FEAData):
         if self.graph is None:
             raise ValueError("The part's graph is not built. Ensure the part has nodes and elements.")
         import networkx as nx
+
         # Use an undirected view of the graph for pathfinding
         undirected_graph = self.graph.to_undirected()
         try:
@@ -1067,6 +1068,7 @@ class _Part(FEAData):
             group represents a disconnected island of nodes.
         """
         import networkx as nx
+
         if self.graph is None:
             raise ValueError("The part's graph is not built. Ensure the part has nodes and elements.")
         undirected_graph = self.graph.to_undirected()
@@ -1098,6 +1100,7 @@ class _Part(FEAData):
             A list of ElementsGroup objects, where each group corresponds to a layer.
         """
         import networkx as nx
+
         if self.elements is None:
             raise ValueError("No elements in the part.")
 

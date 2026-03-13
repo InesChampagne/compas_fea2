@@ -435,10 +435,9 @@ class SQLiteResultsDatabase(ResultsDatabase):
         result object.
         """
         # Clean non-init keywords and fetch member
-        step_name=result_line.pop("step", None)
-        part_name=result_line.pop("part", None)
+        part_name = result_line.pop("part", None)
         key = result_line.pop("key")
-        part = self.model.find_part_by_name(name = part_name)
+        part = self.model.find_part_by_name(name=part_name)
         m = getattr(part, results_func)(key)
 
         m = m[0] if isinstance(m, (list, tuple)) else m

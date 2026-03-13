@@ -675,7 +675,7 @@ class _Element1D(_Element):
 
         if not hasattr(step, "section_forces_field"):
             raise ValueError("The step does not have a section_forces_field")
-        return step.section_forces_field.get_result_at(self) # type: ignore[return-value]
+        return step.section_forces_field.get_result_at(self)  # type: ignore[return-value]
 
     def forces(self, step: "_Step") -> Dict["Node", "Vector"]:
         """Get the forces result for the element.
@@ -1079,7 +1079,6 @@ class _Element2D(_Element):
 
         self._ndim = 2
 
-
     @property
     def nodes(self) -> List["Node"]:
         return self._nodes
@@ -1204,7 +1203,7 @@ class _Element2D(_Element):
         """
         if not hasattr(step, "stress_field"):
             raise ValueError("The step does not have a stress field")
-        return step.stress_field.get_result_at(self) # type: ignore[return-value]
+        return step.stress_field.get_result_at(self)  # type: ignore[return-value]
 
 
 class ShellElement(_Element2D):

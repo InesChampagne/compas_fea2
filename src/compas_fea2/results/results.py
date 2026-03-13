@@ -191,11 +191,11 @@ class NodeResult(Result):
 
     @property
     def vector(self):
-        return Vector(self._x, self._y, self._z) # type: ignore
+        return Vector(self._x, self._y, self._z)  # type: ignore
 
     @property
     def vector_rotation(self):
-        return Vector(self._xx, self._yy, self._zz) # type: ignore
+        return Vector(self._xx, self._yy, self._zz)  # type: ignore
 
     @property
     def magnitude(self):
@@ -456,7 +456,7 @@ class ContactForcesResult(NodeResult):
     _invariants_names = ["magnitude"]
 
     def __init__(self, node, Nx=0, Ny=0, Nz=0, Tx=0, Ty=0, Tz=0, **kwargs):
-        super().__init__(node, x=Nx+Tx, y=Ny+Ty, z=Nz+Tz, xx=0, yy=0, zz=0, **kwargs)
+        super().__init__(node, x=Nx + Tx, y=Ny + Ty, z=Nz + Tz, xx=0, yy=0, zz=0, **kwargs)
         self._Nx = Nx
         self._Ny = Ny
         self._Nz = Nz
@@ -487,15 +487,15 @@ class ContactForcesResult(NodeResult):
     @property
     def Tz(self):
         return self._Tz
-    
+
     @property
     def N(self):
-        return Vector(self.Nx,self.Ny,self.Nz)
-    
+        return Vector(self.Nx, self.Ny, self.Nz)
+
     @property
     def T(self):
-        return Vector(self.Tx,self.Ty,self.Tz)
-    
+        return Vector(self.Tx, self.Ty, self.Tz)
+
 
 class TemperatureResult(NodeResult):
     """TemperatureResult object.
@@ -1287,7 +1287,7 @@ class StressResult(ElementResult):
         if not isinstance(self.location.section.material, ElasticIsotropic):
             raise NotImplementedError("This function is only available for Elastic Isotropic materials")
         # Delta_sigma = E * alpha * Delta_T
-        return self.location.section.material.E * self.location.section.material.expansion * temperature_change # type: ignore
+        return self.location.section.material.E * self.location.section.material.expansion * temperature_change  # type: ignore
 
     def generate_html_report(self, file_path):
         """

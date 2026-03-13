@@ -6,18 +6,18 @@ from compas_fea2.base import FEAData
 from compas_fea2.base import Registry
 from compas_fea2.base import from_data
 from compas_fea2.model.bcs import _BoundaryCondition
+from compas_fea2.model.elements import _Element1D
+from compas_fea2.model.groups import ElementsGroup
 from compas_fea2.model.groups import NodesGroup
 from compas_fea2.model.ics import _InitialCondition
 from compas_fea2.model.nodes import Node
-from compas_fea2.model.groups import ElementsGroup
-from compas_fea2.model.elements import _Element1D
 from compas_fea2.model.releases import _BeamEndRelease
 
 if TYPE_CHECKING:
     from compas_fea2.model.bcs import _BoundaryCondition
     from compas_fea2.model.ics import _InitialCondition
-    from compas_fea2.model.parts import _Part
     from compas_fea2.model.model import Model
+    from compas_fea2.model.parts import _Part
 
 
 class _ConditionsField(FEAData):
@@ -182,6 +182,7 @@ class InitialStressField(_InitialConditionField):
 # BEAM END RELEASE FIELDS
 # ------------------------------------------------------------------------------
 
+
 class BeamReleaseField(FEAData):
     """A BeamReleaseField is the spatial distribution of a specific set of beam end releases.
 
@@ -191,7 +192,7 @@ class BeamReleaseField(FEAData):
         The release applied to the field.
     elements : `:class:compas_fea2.model.ElementsGroup`
         The elements composing the fields.
-    release_end : str 
+    release_end : str
         The end to release is applied (start, end or both).
     name : str, optional
         Unique identifier for the field.
@@ -210,7 +211,8 @@ class BeamReleaseField(FEAData):
     part :  `:class:compas_fea2.model._Part`
         Part of the release field
     """
-    def __init__(self, release, elements, end, name = None, **kwargs):
+
+    def __init__(self, release, elements, end, name=None, **kwargs):
         super().__init__(name, **kwargs)
         if not isinstance(elements, ElementsGroup):
             self._elements = ElementsGroup(elements)
@@ -218,9 +220,8 @@ class BeamReleaseField(FEAData):
             self._elements = elements
         for element in self._elements:
             if not isinstance(element, _Element1D):
-                raise ValueError('A BeamEndRelease can only applied on 1D elements.')
+                raise ValueError("A BeamEndRelease can only applied on 1D elements.")
         self._release = release
-
 
         self._end = end
         self._check_registration()
@@ -236,7 +237,7 @@ class BeamReleaseField(FEAData):
     def release(self) -> "_BeamEndRelease":
         if isinstance(self._release, _BeamEndRelease):
             return self._release
-        else :
+        else:
             raise ValueError("Release is not a _BeamEndRelease.")
 
     @property
@@ -244,7 +245,7 @@ class BeamReleaseField(FEAData):
         return self._elements
 
     @property
-    def end(self) -> str :
+    def end(self) -> str:
         return self._end
 
     @property
@@ -262,4 +263,3 @@ class BeamReleaseField(FEAData):
     @property
     def model(self) -> "Model":
         return self.part.model
-    

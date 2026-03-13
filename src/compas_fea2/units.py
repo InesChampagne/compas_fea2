@@ -161,8 +161,8 @@ UNIT_SYSTEMS: Dict[str, Dict[str, pint.Unit]] = {
         "force": ureg.newton,
         "moment": ureg.newton * ureg.millimeter,  # N·mm
         # Loads
-        "line_load": ureg.newton / ureg.millimeter,  
-        "surface_load": ureg.newton / ureg.millimeter**2, 
+        "line_load": ureg.newton / ureg.millimeter,
+        "surface_load": ureg.newton / ureg.millimeter**2,
         "volumetric_load": ureg.newton / ureg.millimeter**3,
         # Stress/strain & moduli
         "stress": ureg.megapascal,  # MPa with mm

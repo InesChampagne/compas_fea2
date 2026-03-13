@@ -38,8 +38,4 @@ def set_backend(plugin):
 
 
 def list_backends() -> list[str]:
-    return [
-        str(name)
-        for e in entry_points(group="compas_fea2.backends")
-        if (name := getattr(e, "name", None) or getattr(e, "key", None)) is not None
-    ]
+    return [str(name) for e in entry_points(group="compas_fea2.backends") if (name := getattr(e, "name", None) or getattr(e, "key", None)) is not None]

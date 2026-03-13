@@ -39,7 +39,7 @@ class GeneralDisplacement(FEAData, Frameable):
 
     DOF_MASK: Dict[str, bool] | None = None
 
-    def __init__(self, x: bool = False, y: bool = False, z: bool = False, xx: bool = False, yy: bool = False, zz: bool = False, frame: Frame | None = None, amplitude = None, **kwargs):
+    def __init__(self, x: bool = False, y: bool = False, z: bool = False, xx: bool = False, yy: bool = False, zz: bool = False, frame: Frame | None = None, amplitude=None, **kwargs):
         FEAData.__init__(self, **kwargs)
         Frameable.__init__(self, frame=frame)
         self._x = x

@@ -1,9 +1,9 @@
 from typing import Optional
 
+import compas_fea2.units as u
 from compas_fea2.base import Registry
 from compas_fea2.base import from_data
 from compas_fea2.units import units_io
-import compas_fea2.units as u
 
 from .material import ElasticIsotropic
 
@@ -52,7 +52,7 @@ class Steel(ElasticIsotropic):
 
     @units_io(types_in=("stress", None, "density", "stress", "stress", None), types_out=None)
     def __init__(self, *, E, v, density, fy, fu, eu, **kwargs):
-        super().__init__(E=E*u.MPa, v=v, density=density*u.kg_per_m3, **kwargs)
+        super().__init__(E=E * u.MPa, v=v, density=density * u.kg_per_m3, **kwargs)
 
         fu = fu or fy
 

@@ -325,7 +325,8 @@ class Model(FEAData):
     def interactions(self) -> "InteractionsGroup":
         """Return a dictionary of all interactions in the model."""
         from compas_fea2.model.interactions import _Interaction
-        return InteractionsGroup(members=list(filter(lambda behaviour : isinstance(behaviour, _Interaction), [interface.behavior for interface in self.interfaces])))
+
+        return InteractionsGroup(members=list(filter(lambda behaviour: isinstance(behaviour, _Interaction), [interface.behavior for interface in self.interfaces])))
 
     # TODO change to leverage groups
     @property
@@ -930,7 +931,7 @@ class Model(FEAData):
             "thermal": "ThermalBC",
             "rollerXY": "RollerBCXY",
             "rollerXZ": "RollerBCXZ",
-            "rollerYZ": "RollerBCYZ"
+            "rollerYZ": "RollerBCYZ",
         }
         m = importlib.import_module("compas_fea2.model.bcs")
         bc = getattr(m, types[bc_type])(frame=frame)

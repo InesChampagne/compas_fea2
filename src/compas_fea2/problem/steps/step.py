@@ -630,8 +630,8 @@ class GeneralStep(_Step):
         TypeError
             If `nodes` is not a list, tuple, or NodesGroup.
         """
-        from compas_fea2.problem.fields import DisplacementField
         from compas_fea2.problem.displacements import GeneralDisplacement
+        from compas_fea2.problem.fields import DisplacementField
 
         displacement = GeneralDisplacement(x=x, y=y, z=z, xx=xx, yy=yy, zz=zz, axes=axes, **kwargs)
         return self.add_field(DisplacementField(displacement, nodes))

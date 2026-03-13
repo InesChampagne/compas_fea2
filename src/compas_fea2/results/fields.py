@@ -540,6 +540,7 @@ class ContactForcesFieldResults(NodeFieldResults):
 
     def __init__(self, *args, **kwargs):
         from compas_fea2.results.results import ContactForcesResult
+
         super().__init__(*args, **kwargs)
         self._field_name = ContactForcesResult._field_name
 

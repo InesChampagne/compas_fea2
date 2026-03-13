@@ -165,7 +165,7 @@ class FEAData(Data):
         self._registration = value
 
     @name.setter
-    def name(self, value: str) -> None: # type: ignore
+    def name(self, value: str) -> None:  # type: ignore
         self._name = value
 
     def __repr__(self) -> str:
