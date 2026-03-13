@@ -252,8 +252,7 @@ class LoadFieldsCombination(FEAData):
             if factor == 0.0:
                 continue
             if isinstance(field, GravityLoadField):
-                field._g = factor * field._g
-                scaled_field = field
+                scaled_field = GravityLoadField(g=field.g * factor, distribution=field.distribution, load_case ='G')
             else:
                 scaled_field = field if factor == 1.0 else factor * field
             scaled_fields.append(scaled_field)
