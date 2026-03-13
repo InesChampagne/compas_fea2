@@ -630,15 +630,11 @@ class GeneralStep(_Step):
         TypeError
             If `nodes` is not a list, tuple, or NodesGroup.
         """
-        raise NotImplementedError("This method is not implemented yet.")
-        # from compas_fea2.problem.fields import DisplacementField
+        from compas_fea2.problem.fields import DisplacementField
+        from compas_fea2.problem.displacements import GeneralDisplacement
 
-        # if not isinstance(nodes, (list, tuple, NodesGroup)):
-        #     raise TypeError(f"nodes must be a list, tuple, or NodesGroup, not {type(nodes)}")
-        # nodes = NodesGroup(nodes) if not isinstance(nodes, NodesGroup) else nodes
-
-        # displacement = GeneralDisplacement(x=x, y=y, z=z, xx=xx, yy=yy, zz=zz, axes=axes, **kwargs)
-        # return self.add_field(DisplacementField(displacement, nodes))
+        displacement = GeneralDisplacement(x=x, y=y, z=z, xx=xx, yy=yy, zz=zz, axes=axes, **kwargs)
+        return self.add_field(DisplacementField(displacement, nodes))
 
     # ==============================================================================
     #                             Combinations
