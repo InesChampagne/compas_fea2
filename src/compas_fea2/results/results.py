@@ -907,7 +907,7 @@ class StressResult(ElementResult):
     # _components_names = ["s11", "s22", "s33", "s12", "s23", "s13"]
     # _invariants_names = ["magnitude"]
 
-    def __init__(self, element, *, s11, s12, s13, s22, s23, s33, **kwargs):
+    def __init__(self, element, *, s11, s12, s13, s22, s23, s33, minPrincipal, maxPrincipal, **kwargs):
         super().__init__(element, **kwargs)
         self._s11 = s11
         self._s12 = s12
@@ -915,6 +915,8 @@ class StressResult(ElementResult):
         self._s22 = s22
         self._s23 = s23
         self._s33 = s33
+        self._minprincipal = minPrincipal
+        self._maxprincipal = maxPrincipal
 
         # Define stress tensor in local coordinates
         self._local_stress = np.array([[s11, s12, s13], [s12, s22, s23], [s13, s23, s33]])
@@ -945,6 +947,14 @@ class StressResult(ElementResult):
     @property
     def s33(self):
         return self._s33
+
+    @property
+    def minprincipal(self):
+        return self._minprincipal
+
+    @property
+    def maxprincipal(self):
+        return self._maxprincipal
 
     @property
     def global_strain(self):

@@ -545,6 +545,10 @@ class ContactForcesFieldResults(NodeFieldResults):
 
         self._result_cls = ContactForcesResult
 
+    @property
+    def components_names(self):
+        return ["Nx", "Ny", "Nz", "Tx", "Ty", "Tz"]
+
 
 class TemperatureFieldResults(NodeFieldResults):
     """Reaction field results.
@@ -741,7 +745,7 @@ class StressFieldResults(ElementFieldResults):
 
     @property
     def invariants_names(self):
-        return ["von_mises_stress", "principal_stress_min", "principal_stress_mid", "principal_stress_max"]
+        return ["minPrincipal", "maxPrincipal"]
 
     def get_component_value(self, component, **kwargs):
         """Return the value of the selected component."""
