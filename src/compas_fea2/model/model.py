@@ -324,7 +324,8 @@ class Model(FEAData):
     @property
     def interactions(self) -> "InteractionsGroup":
         """Return a dictionary of all interactions in the model."""
-        return InteractionsGroup(members=[interface.behavior for interface in self.interfaces])
+        from compas_fea2.model.interactions import _Interaction
+        return InteractionsGroup(members=list(filter(lambda behaviour : isinstance(behaviour, _Interaction), [interface.behavior for interface in self.interfaces])))
 
     # TODO change to leverage groups
     @property
@@ -1151,7 +1152,7 @@ class Model(FEAData):
         field.distribution.remove_members(nodes)
 
     # FIXME: this should be easy to implement
-    def add_ics(self, ic: "_InitialCondition", members: "Union[list[Union[Node, _Element]], NodesGroup]") -> "_InitialCondition":
+    def add_ics(self, ic_field):
         """Add a :class=`compas_fea2.model._InitialCondition` to the model.
 
         Parameters
@@ -1166,37 +1167,33 @@ class Model(FEAData):
         :class=`compas_fea2.model._InitialCondition`
             The applied initial condition.
         """
-        raise NotImplementedError("This method is not implemented in the base Model class. Please use a specific model subclass.")
 
-        # if not isinstance(ic_field, _InitialConditionField):
-        #     raise TypeError("{!r} is not an Initial Condition Field.".format(ic_field))
+        if not isinstance(ic_field, _InitialConditionField):
+            raise TypeError("{!r} is not an Initial Condition Field.".format(ic_field))
 
-        # for node in ic_field.distribution:
-        #     if not isinstance(node, Node):
-        #         raise TypeError("{!r} is not a Node.".format(node))
-        #     if not node.part:
-        #         raise ValueError("{!r} is not registered to any part.".format(node))
-        #     elif node.part not in self.parts:
-        #         raise ValueError("{!r} belongs to a part not registered to this model.".format(node))
-        #     if isinstance(node.part, RigidPart):
-        #         if not node.is_reference:
-        #             raise ValueError("For rigid parts bundary conditions can be assigned only to the reference point")
-        #     node._bcs.add_members(ic_field.conditions)
+        for node in ic_field.distribution:
+            if not isinstance(node, Node):
+                raise TypeError("{!r} is not a Node.".format(node))
+            if not node.part:
+                raise ValueError("{!r} is not registered to any part.".format(node))
+            elif node.part not in self.parts:
+                raise ValueError("{!r} belongs to a part not registered to this model.".format(node))
+            if isinstance(node.part, RigidPart):
+                if not node.is_reference:
+                    raise ValueError("For rigid parts bundary conditions can be assigned only to the reference point")
 
-        # self._ics_fields.add(ic_field)
-        # ic_field._registration = self
+        self._fields.add_member(ic_field)
+        ic_field._registration = self
 
-        # return ic_field
+        return ic_field
 
     def add_ics_fields(self, ics_fields: list["_InitialConditionField"]) -> list["_InitialConditionField"]:
-        raise NotImplementedError("This method is not implemented in the base Model class. Please use a specific model subclass.")
-        # for ics_field in ics_fields:
-        #     self.add_ics_field(ics_field)
-        # return ics_field
+        for ics_field in ics_fields:
+            self.add_ics_field(ics_field)
+        return ics_field
 
     def add_uniform_thermal_ics_field(self, T0: float, nodes) -> InitialTemperatureField:
-        raise NotImplementedError("This method is not implemented in the base Model class. Please use a specific model subclass.")
-        # return self.add_ics_field(InitialTemperatureField(nodes=nodes, conditions=InitialTemperature(T0=T0)))
+        return self.add_ics(InitialTemperatureField(nodes=nodes, condition=InitialTemperature(T0=T0)))
 
     # =========================================================================
     #                           Constraints methods
