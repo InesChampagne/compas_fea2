@@ -128,8 +128,8 @@ class PartPartInterface(_Interface):
         if not slave_faces:
             raise ValueError(f"No faces found on slave part '{part_slave.name}' for the given plane.")
 
-        master_fg = FacesGroup(master_faces, name=f"{part_master.name}_to_{part_slave.name}_master", part=part_master)
-        slave_fg = FacesGroup(slave_faces, name=f"{part_master.name}_to_{part_slave.name}_slave", part=part_slave)
+        master_fg = FacesGroup(master_faces, name=f"{part_master.name}_to_{part_slave.name}_master_{round(plane.point.x)}{round(plane.point.y)}", part=part_master)
+        slave_fg = FacesGroup(slave_faces, name=f"{part_master.name}_to_{part_slave.name}_slave_{round(plane.point.x)}{round(plane.point.y)}", part=part_slave)
 
         return cls(master=master_fg, slave=slave_fg, behavior=behavior, **kwargs)
 
