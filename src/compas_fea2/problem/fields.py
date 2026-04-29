@@ -231,8 +231,8 @@ class _NodesLoadField(_BaseLoadField):
     """
 
     def __init__(self, loads, distribution: "Node | Iterable[Node] | NodesGroup", load_case: str | None = None, combination_rank: int = 1, **kwargs):
-        if not isinstance(distribution, NodesGroup):
-            distribution = NodesGroup(distribution)
+        # if not isinstance(distribution, NodesGroup):
+        #     distribution = NodesGroup(distribution)
         super().__init__(loads=loads, distribution=distribution, load_case=load_case, combination_rank=combination_rank, **kwargs)
 
     @property
