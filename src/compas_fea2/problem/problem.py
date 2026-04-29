@@ -194,10 +194,10 @@ class Problem(FEAData):
         if self._steps:
             if step not in self._steps:
                 print("{!r} not found".format(step))
-                if add:
-                    step = self.add_step(step)
-                    print("{!r} added to the Problem".format(step))
-                    return step
+                # if add:
+                #     step = self.add_step(step)
+                #     print("{!r} added to the Problem".format(step))
+                #     return step
                 return False
             return True
         else:
