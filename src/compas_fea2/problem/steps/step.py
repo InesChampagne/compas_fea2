@@ -8,6 +8,7 @@ from compas_fea2.base import from_data
 from compas_fea2.model.groups import NodesGroup
 from compas_fea2.problem.combinations import LoadFieldsCombination
 from compas_fea2.problem.combinations import StepsCombination
+from compas_fea2.problem.loads import VectorLoad
 from compas_fea2.problem.fields import DisplacementField
 from compas_fea2.problem.fields import ForceField
 from compas_fea2.problem.fields import GravityLoadField
@@ -15,6 +16,9 @@ from compas_fea2.problem.fields import TemperatureField
 from compas_fea2.problem.groups import LoadsFieldGroup
 from compas_fea2.results import DisplacementFieldResults
 from compas_fea2.results import TemperatureFieldResults
+from compas.geometry import Polygon
+from compas_fea2.model.groups import PartsGroup, FacesGroup
+import compas_fea2.units as u
 
 if TYPE_CHECKING:
     from compas_fea2.model import Model
@@ -424,7 +428,7 @@ class GeneralStep(_Step):
             self._fields = LoadsFieldGroup(members=[field])
         else:
             self._fields.add_member(field)
-            self.model._groups.add(field.distribution)
+            # self.model._groups.add(field.distribution)
         field._registration = self
         return field
 
@@ -505,6 +509,42 @@ class GeneralStep(_Step):
         # field = UniformSurfaceLoadField(load=[load], surface=surface, load_case=load_case, **kwargs)
 
         # return self.add_field(field)
+
+    def add_tributary_surface_load_field(self, polygon : Polygon, parts : PartsGroup, load_case=None, x=None, y=None, z=None, xx=None, yy=None, zz=None, axes="global", combination_rank=1, **kwargs):
+        """
+        Take all element faces inside the polygon and distribute the load accordingly to the faces.
+        Each node of the face receives a equal part of area (simplification).
+        """
+
+        tol = kwargs.get('tol', None)
+        dofs = {'x': x, 'y' : y, 'z': z, 'xx': xx, 'yy': yy, 'zz': zz}
+        print(polygon.area)
+
+        faces_in_polygon = FacesGroup(members=[])
+        for part in parts :
+            part_faces_in_polygon = part.find_faces_in_polygon(polygon=polygon, tol = tol) if tol else part.find_faces_in_polygon(polygon=polygon)
+            faces_in_polygon.add_members(part_faces_in_polygon)
+        sum_area_face = 0
+        for face in faces_in_polygon :
+            sum_area_face += face.area
+        print(sum_area_face)
+
+        node_load = {}
+        for face in faces_in_polygon:
+            share_per_node = face.area *u.current_unit_for("area")/len(face.nodes)
+            load_per_node = {}
+            for dof in dofs.keys() :
+                if dofs[dof]:
+                    load_per_node[dof] = dofs[dof] * share_per_node
+            for node in face.nodes:
+                #initialize the node in the dict if not already there
+                if node not in node_load.keys():
+                    node_load[node] = VectorLoad(**load_per_node)
+                else :
+                    node_load[node] += VectorLoad(**load_per_node)
+        for node, load in node_load.items():
+            force_field = ForceField(distribution = [node], loads = [load], load_case=load_case, combination_rank=combination_rank)
+            self.add_field(field=force_field)   
 
     def add_surface_field(self, surface, load_case=None, x=None, y=None, z=None, xx=None, yy=None, zz=None, axes="global", **kwargs):
         """Add a :class:`compas_fea2.problem.PointLoad` subclass object to the
