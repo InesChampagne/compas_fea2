@@ -102,7 +102,7 @@ class PartPartInterface(_Interface):
         super().__init__(master=master, slave=slave, behavior=behavior, **kwargs)
 
     @classmethod
-    def from_parts_and_plane(cls, part_master, part_slave, plane, behavior, **kwargs):
+    def from_parts_and_plane(cls, part_master, part_slave, plane, behavior, tol=None, **kwargs):
         """Create a PartPartInterface from two parts and a plane that separates them.
 
         Parameters
@@ -119,7 +119,8 @@ class PartPartInterface(_Interface):
         """
         from compas_fea2.model import FacesGroup
 
-        tol = 1e-3
+        if not tol :
+            tol = 1e-3
         master_faces = part_master.find_faces_on_plane(plane, tol=tol)
         slave_faces = part_slave.find_faces_on_plane(plane, tol=tol)
 
