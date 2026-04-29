@@ -550,6 +550,10 @@ class ContactForcesFieldResults(NodeFieldResults):
     def components_names(self):
         return ["Nx", "Ny", "Nz", "Tx", "Ty", "Tz"]
 
+    @property
+    def invariants_names(self):
+        return ["Magnitude"]
+
 
 class TemperatureFieldResults(NodeFieldResults):
     """Reaction field results.
@@ -782,3 +786,53 @@ class StressFieldResults(ElementFieldResults):
         TODO: Implement nodal averaging using element-to-node mapping.
         """
         raise NotImplementedError("average_stress_at_nodes is not implemented yet.")
+
+class ConnectorForceFieldResults(ElementFieldResults):
+    """
+    Forces in the connector.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._results_func = "find_element_by_key"
+        self._field_name = "conn_force"
+        from compas_fea2.results.results import ConnectorForceResult
+
+        self._result_cls = ConnectorForceResult
+
+    @property
+    def field_name(self):
+        return self._field_name
+
+    @property
+    def results_func(self):
+        return self._results_func
+
+    @property
+    def components_names(self):
+        return ["cf1", "cf2", "cf3", "cm1", "cm2", "cm3"]
+    
+class ConnectorDisplacementFieldResults(ElementFieldResults):
+    """
+    Forces in the connector.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._results_func = "find_element_by_key"
+        self._field_name = "conn_disp"
+        from compas_fea2.results.results import ConnectorDisplacementResult
+
+        self._result_cls = ConnectorDisplacementResult
+
+    @property
+    def field_name(self):
+        return self._field_name
+
+    @property
+    def results_func(self):
+        return self._results_func
+
+    @property
+    def components_names(self):
+        return ["cu1", "cu2", "cu3", "cu4", "cu5", "cu6"]

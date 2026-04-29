@@ -455,7 +455,7 @@ class ContactForcesResult(NodeResult):
     _components_names = ["Nx", "Ny", "Nz", "Tx", "Ty", "Tz"]
     _invariants_names = ["magnitude"]
 
-    def __init__(self, node, Nx=0, Ny=0, Nz=0, Tx=0, Ty=0, Tz=0, **kwargs):
+    def __init__(self, node, Nx=0, Ny=0, Nz=0, Tx=0, Ty=0, Tz=0, magnitude=0, **kwargs):
         super().__init__(node, x=Nx + Tx, y=Ny + Ty, z=Nz + Tz, xx=0, yy=0, zz=0, **kwargs)
         self._Nx = Nx
         self._Ny = Ny
@@ -463,6 +463,7 @@ class ContactForcesResult(NodeResult):
         self._Tx = Tx
         self._Ty = Ty
         self._Tz = Tz
+        self._magnitude = magnitude
 
     @property
     def Nx(self):
@@ -489,11 +490,15 @@ class ContactForcesResult(NodeResult):
         return self._Tz
 
     @property
+    def magnitude(self):
+        return self._magnitude
+
+    @property
     def N(self):
         return Vector(self.Nx, self.Ny, self.Nz)
 
     @property
-    def T(self):
+    def S(self):
         return Vector(self.Tx, self.Ty, self.Tz)
 
 
@@ -1520,6 +1525,14 @@ class SolidStressResult(StressResult):
         super().__init__(element=element, s11=s11, s12=s12, s13=s13, s22=s22, s23=s23, s33=s33, **kwargs)
         self._title = "s3d"
 
+
+class ConnectorForceResult(Result):
+    def __init__(self, element, cf1, cf2, cf3, **kwargs):
+        super().__init__(element=element, cf1=cf1, cf2=cf2, cf3=cf3, **kwargs)
+
+class ConnectorDisplacementResult(Result):
+    def __init__(self, element, cu1, cu2, cu3, **kwargs):
+        super().__init__(element=element, cu1=cu1, cf2=cu2, cf3=cu3, **kwargs)
 
 class StrainResult(Result):
     pass
