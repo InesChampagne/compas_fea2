@@ -4,7 +4,7 @@ from compas_fea2.base import FEAData
 from compas_fea2.base import Registry
 from compas_fea2.base import from_data
 from compas_fea2.problem.loads import ScalarLoad
-from compas_fea2.units import units_io
+from compas_fea2.units import units_io, no_units    
 
 
 class _Interaction(FEAData):
@@ -390,13 +390,13 @@ class Convection(ThermalInteraction):
 
     """
 
-    @units_io(types_in=("heat_transfer_coefficient", "temperature", None), types_out=None)
+    @no_units
     def __init__(self, h, temperature_value, temperature_amplitude, **kwargs):
         super().__init__(temperature_value=temperature_value, temperature_amplitude=temperature_amplitude, **kwargs)
         self._h = h
 
     @property
-    @units_io(types_in=(), types_out="heat_transfer_coefficient")
+    @no_units
     def h(self):
         return self._h
 
