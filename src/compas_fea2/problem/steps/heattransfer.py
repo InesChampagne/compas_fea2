@@ -1,10 +1,10 @@
 from compas_fea2.problem.fields import TemperatureField
 
-from .step import _Step
+from .step import _Step, GeneralStep
 
 
 # TODO: Change to inherit from GeneralStep
-class HeatTransferStep(_Step):
+class HeatTransferStep(GeneralStep):
     """HeatTransfer for use in a heat transfer analysis.
     Specific for now to a transient heat transfer analysis as defined in Abaqus.
 
@@ -89,7 +89,12 @@ class HeatTransferStep(_Step):
         **kwargs,
     ):
         super().__init__(
-            **kwargs,
+        max_increments= max_increments,
+        initial_inc_size= initial_inc_size,
+        min_inc_size=min_inc_size,
+        max_inc_size=max_inc_size,
+        time=time,
+        **kwargs,
         )
 
         self._max_increments = max_increments
@@ -157,3 +162,14 @@ class HeatTransferStep(_Step):
         for amplitude in field.amplitudes:
             self.model.amplitudes.add(amplitude)
         return field
+    
+        
+    @property
+    def amplitudes(self):
+        """Return the amplitudes associated with the step."""
+        amplitudes = set()
+        if self.fields:
+            for load_field in self.fields:
+                for load in filter(lambda p: getattr(p, "amplitude"), load_field.loads):
+                    amplitudes.add(load.amplitudes)
+            return amplitudes

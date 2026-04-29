@@ -445,8 +445,8 @@ class _Part(FEAData):
         # gmshModel.set_option("Mesh.OptimizeNetgen", 1)
 
         # Get nodes and elements from the gmsh model
-        # gmshModel.heal()
-        gmshModel.model.mesh.generate(3)
+        gmshModel.heal()
+        gmshModel.generate_mesh(3)
         model = gmshModel.model
         node_coords = model.mesh.get_nodes()[1].reshape((-1, 3), order="C")
         gmsh_elements = model.mesh.get_elements()
@@ -1417,7 +1417,7 @@ class _Part(FEAData):
         if number_of_nodes == 0:
             return None
 
-        tree = KDTree([n.xyz for n in self.nodes])
+        tree = KDTree([n._xyz for n in self.nodes])
         distances, indices = tree.query(point, k=number_of_nodes)
         if number_of_nodes == 1:
             if single:
@@ -1977,7 +1977,7 @@ class _Part(FEAData):
         faces_group = FacesGroup(faces)
 
         # find faces on the plane of the polygon
-        if not is_coplanar(polygon.points):
+        if not is_coplanar(polygon.points, tol=tol):
             raise ValueError("The polygon is not planar.")
 
         plane = getattr(polygon, "plane", None) or Plane.from_points(polygon.points[:3])
