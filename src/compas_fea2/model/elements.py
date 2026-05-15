@@ -762,8 +762,8 @@ class BeamElement(_Element1D):
 class TrussElement(_Element1D):
     """A 1D element that resists axial loads."""
 
-    def __init__(self, nodes: List["Node"], section: "_Section1D", implementation: Optional[str] = None, rigid: bool = False, heat: bool = False, **kwargs):
-        super().__init__(nodes, section, orientation=None, implementation=implementation, rigid=rigid, heat=heat, **kwargs)
+    def __init__(self, nodes: List["Node"], section: "_Section1D", implementation: Optional[str] = None, rigid: bool = False, heat: bool = False, orientation = None, **kwargs):
+        super().__init__(nodes, section, orientation=orientation, implementation=implementation, rigid=rigid, heat=heat, **kwargs)
 
 
 class StrutElement(TrussElement):
