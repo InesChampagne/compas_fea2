@@ -1303,6 +1303,14 @@ class ISection(_Section1D):
     @classmethod
     def IPE400(cls, material, **kwargs):
         return cls(w=180, h=400, tw=8.6, tbf=13.5, ttf=13.5, material=material, **kwargs)
+    
+    @classmethod
+    def IPE450(cls, material, **kwargs):
+        return cls(w=190, h=450, tw=9.4, tbf=14.6, ttf=14.6, material=material, **kwargs)
+
+    @classmethod
+    def IPE500(cls, material, **kwargs):
+        return cls(w=200, h=500, tw=10.2, tbf=16, ttf=16, material=material, **kwargs)
 
     # HEA Sections
     @classmethod

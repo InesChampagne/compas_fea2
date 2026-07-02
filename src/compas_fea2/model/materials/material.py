@@ -446,6 +446,33 @@ strain_stress : {}
         )
 
 
+class UniaxialBilinearMaterial(_Material):
+    """Uniaxial material with independent tension and compression branches.
+
+    Each branch can be elastic or elastic-perfectly plastic, or absent.
+    Only meaningful for TrussElement or spring elements.
+
+    Parameters
+    ----------
+    kt : float or None
+        Elastic modulus in tension. None = no tension capacity.
+    kc : float or None
+        Elastic modulus in compression. None = no compression capacity.
+    epsyt : float or None
+        Yield strain in tension (positive). None = elastic, no yield.
+    epsyc : float or None
+        Yield strain in compression (negative). None = elastic, no yield.
+    """
+
+    def __init__(self, kt=None, kc=None, epsyt=None, epsyc=None, density=None, **kwargs):
+        super().__init__(density=density, **kwargs)
+        self.kt = kt
+        self.kc = kc
+        self.epsyt = epsyt  # positive or None
+        self.epsyc = epsyc  # negative or None
+
+
+
 # ==============================================================================
 # User-defined Materials
 # ==============================================================================
