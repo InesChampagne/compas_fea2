@@ -31,6 +31,7 @@ from .materials.material import (
     ElasticPlastic,
     Stiff,
     UserMaterial,
+    UniaxialBilinearMaterial,
 )
 from .materials.concrete import (
     Concrete,

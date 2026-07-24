@@ -510,23 +510,30 @@ class GeneralStep(_Step):
 
         # return self.add_field(field)
 
-    def add_tributary_surface_load_field(self, polygon : Polygon, parts : PartsGroup, load_case=None, x=None, y=None, z=None, xx=None, yy=None, zz=None, axes="global", combination_rank=1, **kwargs):
+    def add_tributary_surface_load_field(self, polygon : Polygon, parts : PartsGroup, load_case=None, x=None, y=None, z=None, xx=None, yy=None, zz=None, axes="global", combination_rank=1, tol=None, check_load=False, check_face = False, **kwargs):
         """
         Take all element faces inside the polygon and distribute the load accordingly to the faces.
         Each node of the face receives a equal part of area (simplification).
         """
-
-        tol = kwargs.get('tol', None)
         dofs = {'x': x, 'y' : y, 'z': z, 'xx': xx, 'yy': yy, 'zz': zz}
         print(polygon.area)
 
         faces_in_polygon = FacesGroup(members=[])
         for part in parts :
-            part_faces_in_polygon = part.find_faces_in_polygon(polygon=polygon, tol = tol) if tol else part.find_faces_in_polygon(polygon=polygon)
+            part_faces_in_polygon = part.find_faces_in_polygon(polygon=polygon, tol = 1) if tol else part.find_faces_in_polygon(polygon=polygon)
             faces_in_polygon.add_members(part_faces_in_polygon)
         sum_area_face = 0
         for face in faces_in_polygon :
             sum_area_face += face.area
+
+        if check_face :
+            from compas_viewer import Viewer
+            from compas_viewer.config import Config
+            v = Viewer(config=Config(unit='mm'))
+            for face in faces_in_polygon :
+                v.scene.add(face.polygon)
+            v.show()
+        
         print(sum_area_face)
 
         node_load = {}
@@ -543,8 +550,22 @@ class GeneralStep(_Step):
                 else :
                     node_load[node] += VectorLoad(**load_per_node)
         for node, load in node_load.items():
-            force_field = ForceField(distribution = [node], loads = [load], load_case=load_case, combination_rank=combination_rank)
+            force_field = ForceField(distribution = [node], loads = [load], load_case=load_case, combination_rank=combination_rank, **kwargs)
             self.add_field(field=force_field)   
+        
+        if check_load:
+            from compas_viewer import Viewer
+            from compas_viewer.config import Config
+            from compas.geometry import Line
+            viewer = Viewer(Config(unit='mm'))
+            viewer.scene.add(polygon)
+            for part in parts :
+                viewer.scene.add(part.boundary_mesh)
+
+            for node, load in node_load.items():
+                l_force = Line.from_point_and_vector(node.point, load.force_vector)
+                viewer.scene.add(l_force)
+            viewer.show()
 
     def add_surface_field(self, surface, load_case=None, x=None, y=None, z=None, xx=None, yy=None, zz=None, axes="global", **kwargs):
         """Add a :class:`compas_fea2.problem.PointLoad` subclass object to the

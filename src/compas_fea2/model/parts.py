@@ -1983,14 +1983,20 @@ class _Part(FEAData):
         plane = getattr(polygon, "plane", None) or Plane.from_points(polygon.points[:3])
         frame = Frame.from_plane(plane)
 
-        faces_subgroup = faces_group.subgroup(condition=lambda face: all(is_point_on_plane(node.xyz, plane) for node in face.nodes))
+        faces_subgroup = faces_group.subgroup(condition=lambda face: all(is_point_on_plane(node.point, plane, tol=tol) for node in face.nodes))
+        # from compas_viewer import Viewer
+        # from compas_viewer.config import Config
+        # viewer = Viewer(config=Config(unit='mm'))
+        # for face in faces_subgroup:
+        #     viewer.scene.add(face.polygon)
+        # viewer.show()
         # find faces within the polygon
         S = Scale.from_factors([tol] * 3, frame)
         T = Transformation.from_frame_to_frame(frame, Frame.worldXY())
         polygon_xy = polygon.transformed(S)
-        polygon_xy = polygon.transformed(T)
-        faces_subgroup.subgroup(condition=lambda face: all(is_point_in_polygon_xy(Point(*node.xyz).transformed(T), polygon_xy) for node in face.nodes))
-        return faces_subgroup
+        # polygon_xy = polygon_xy.transformed(T)
+        faces_in_polygon = faces_subgroup.subgroup(condition=lambda face: all(is_point_in_polygon_xy(node.point, polygon_xy) for node in face.nodes))
+        return faces_in_polygon
 
     def find_boundary_faces(self) -> "FacesGroup":
         """Finds all element faces located on the exterior boundary of the part.

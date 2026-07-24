@@ -937,6 +937,9 @@ class Model(FEAData):
         bc = getattr(m, types[bc_type])(frame=frame)
         field = BoundaryConditionsField(condition=bc, distribution=nodes, **kwargs)
         return self.add_bcs(field)
+    
+    def bcs_clean(self):
+        self._fields = FieldsGroup(set(filter(lambda field : not isinstance(field, BoundaryConditionsField), self._fields)))
 
     def add_fix_bc(self, nodes: "Union[list[Node], NodesGroup]", frame: "Frame" = None, **kwargs):
         """Add a :class=`compas_fea2.model.bcs.FixedBC` to the given nodes.

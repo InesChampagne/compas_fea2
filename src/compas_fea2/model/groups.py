@@ -86,10 +86,12 @@ class _Group(FEAData, Generic[_MemberType]):
     _members_class: type
     _part: Any
     _model: Any
+    _ordered_members: list
 
     def __init__(self, member_class: type, members: Iterable[_MemberType] | None = None, **kwargs):
         super().__init__(**kwargs)
         self._members_class = member_class
+        self._ordered_members = list(members)
         if members:
             # Type check members if provided
             if any(not isinstance(member, self._members_class) for member in members):
@@ -355,6 +357,7 @@ class _Group(FEAData, Generic[_MemberType]):
         if self._members_class and not isinstance(member, self._members_class):
             raise TypeError(f"Member must be of type {self._members_class.__name__}.")
         self._members.add(member)
+        self._ordered_members.append(member)
         return member
 
     def add_members(self, members: Iterable[_MemberType]) -> List[_MemberType]:
@@ -379,7 +382,7 @@ class _Group(FEAData, Generic[_MemberType]):
             True if the member was removed, False if not found.
         """
         if member in self._members:
-            self._members.remove(cast(_MemberType, member))
+            self._members.remove(member)
             return True
         logger.warning(f"Member {member} not found in the group.")
         return False
@@ -941,3 +944,4 @@ class FieldsGroup(_Group["_ConditionsField"]):
     @property
     def fields(self) -> Set["_ConditionsField"]:
         return self._members
+
